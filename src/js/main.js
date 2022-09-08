@@ -134,6 +134,7 @@ window.addEventListener("DOMContentLoaded", () => {
 		// * для отключения прокрутки во время открытого модального окна изменим свойство overflow
 		document.body.style.overflow = "hidden";
 		clearInterval(modalTimerId);
+		window.removeEventListener("scroll", showModalByScroll);
 	}
 
 	modalTrigger.forEach((item) => {
@@ -170,14 +171,83 @@ window.addEventListener("DOMContentLoaded", () => {
 	});
 
 	// ! Вызов модального окна при достижении футера или какого либо промежутка времени 68 УРОК
-	const modalTimerId = setTimeout(openModal, 5000);
+	// const modalTimerId = setTimeout(openModal, 5000);
 
-	function showModalByScroll () {
+	function showModalByScroll() {
 		if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1) {
 			openModal();
 			window.removeEventListener("scroll", showModalByScroll);
 		}
 	}
 
-	window.addEventListener("scroll", showModalByScroll);
+	// window.addEventListener("scroll", showModalByScroll);
+
+	// ! Создание классов в блоке menu__field 
+
+	const blockMenuField = document.querySelector(".menu__field"),
+		blockContainer = blockMenuField.querySelector(".container");
+
+	class MenuClass {
+		constructor(src, alt, title, descr, price, parentSelector) {
+			this.src = src;
+			this.alt = alt;
+			this.title = title;
+			this.descr = descr;
+			this.price = price;
+			this.parent = document.querySelector(parentSelector);
+			this.transfer = 27;
+			this.changeToUAH();
+		}
+
+		changeToUAH() {
+			this.price *= this.transfer;
+		}
+
+		render() {
+			const element = document.createElement("div");
+			element.innerHTML = `
+				<div class = "menu__item" >
+					<img src = ${this.src} alt = ${this.alt} >
+					<h3 class = "menu__item-subtitle" > ${this.title} </h3> 
+					<div class = "menu__item-descr"> 
+						${this.descr} 
+					</div> 
+					<div class = "menu__item-divider"> </div> 
+					<div class = "menu__item-price">
+						<div class = "menu__item-cost"> Цена: </div> 
+						<div class = "menu__item-total"> <span> ${this.price} </span> грн/день </div> 
+					</div> 
+				</div>`;
+			this.parent.append(element);
+		}
+	}
+
+
+	// * в случаях когда нам надо использовать свойство переменной на метсе (без повторного использования в коде)
+	// * можно не присваивать имя
+	new MenuClass("img/tabs/vegy.jpg",
+		"vegy",
+		'Меню "Фитнес"',
+		'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+		10,
+		'.menu__field .container'
+	).render();
+
+	new MenuClass("img/tabs/elite.jpg",
+		"elite",
+		'Меню “Премиум”',
+		'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+		12,
+		'.menu__field .container'
+	).render();
+	
+	new MenuClass("img/tabs/post.jpg",
+		"post",
+		'Меню "Постное"',
+		'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
+		15,
+		'.menu__field .container'
+	).render();
+
+
 });
